@@ -26,25 +26,27 @@ int main(int argc, char *argv[]) {
 
 		//HANDLE OP BYTE
 		int op_code = get_bits(bin_buffer[pos], 2, 7);
-		int dw = get_bits(bin_buffer[pos], 0, 2);
+		int d_bit = get_bits(bin_buffer[pos], 1, 1);
+		int w_bit = get_bits(bin_buffer[pos], 0, 0);
 		char *op_string = op_code_to_string(op_code);
 		strcat(output_buf, op_string);
-		/*printf("%d\n", dw);*/
 
 		instruction_t instr = op_code_to_instr(op_code);
 		switch(instr){
 			case MOV:{
 				int mod = get_bits(bin_buffer[pos+1], 6, 7);
-				int reg_m = get_bits(bin_buffer[pos+1], 3, 5);
-				int reg = get_bits(bin_buffer[pos+1], 0, 2);
-				/*printf("%d\n", mod);*/
-				/*printf("%s\n", reg_to_string(reg_m));*/
-				/*printf("%s\n", reg_to_string(reg));*/
-				strcat(output_buf, " ");
-				strcat(output_buf, reg_to_string(reg_m));
-				strcat(output_buf, ", ");
-				strcat(output_buf, reg_to_string(reg));
-				pos++;
+				//REGISTER TO REGISTER MOVEMENT
+				if (mod == 3){
+					int reg = get_bits(bin_buffer[pos+1], 0, 2);
+					int reg_m = get_bits(bin_buffer[pos+1], 3, 5);
+
+					strcat(output_buf, " ");
+					strcat(output_buf, reg_to_string(reg, w_bit));
+
+					strcat(output_buf, ", ");
+					strcat(output_buf, reg_to_string(reg_m, w_bit));
+					pos++;
+				}
 			}
 		}
 		printf("%s\n", output_buf);

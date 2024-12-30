@@ -86,27 +86,18 @@ reg_t reg_encoding_to_register(int reg_encoding){
 }
 
 
-char *reg_to_string(int reg) {
+char *reg_to_string(int reg, int is_16_bit) {
 	switch (reg) {
-		case 0:
-			return "ax";
-		case 1:
-			return "cx";
-		case 2:
-			return "dx";
-		case 3:
-			return "bx";
-		case 4:
-			return "sp";
-		case 5:
-			return "bp";
-		case 6:
-			return "si";
-		case 7:
-			return "di";
-		default:
-			return "ILLEGAL_REG";
-		}
+		case 0: return is_16_bit ? "ax" : "al";
+		case 1: return is_16_bit ? "cx" : "cl";
+		case 2: return is_16_bit ? "dx" : "dl";
+		case 3: return is_16_bit ? "bx" : "bl";
+		case 4: return is_16_bit ? "sp" : "ah";
+		case 5: return is_16_bit ? "bp" : "ch";
+		case 6: return is_16_bit ? "si" : "dh";
+		case 7: return is_16_bit ? "di" : "bh";
+		default: return "ILLEGAL_REG";
+	}
 }
 
 void print_encoding_to_int(char *encoding){

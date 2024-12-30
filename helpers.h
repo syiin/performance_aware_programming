@@ -31,6 +31,6 @@ void byte_to_binary(uint8_t byte, char* binary);
 instruction_t op_code_to_instr(int op_code);
 char *op_code_to_string(int op_code);
 void print_encoding_to_int(char *encoding);
-char *reg_to_string(int reg);
+char *reg_to_string(int reg, int is_16_bit);
 
 #endif
