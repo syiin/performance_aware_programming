@@ -16,15 +16,31 @@ typedef enum {
 	ILLEGAL_REG
 } reg_t;
 
-typedef struct {
+typedef struct CurrentBits{
+	uint8_t opcode;
+	uint8_t modrm;
+	
+} current_bits_t;
+
+typedef struct Decoder {
 	size_t pos;
+	uint8_t opcode;
+	uint8_t d_bit;
+	uint8_t w_bit;
+	uint8_t mod;
+	uint8_t regm;
+	uint8_t reg;
 	const byte_t *bin_buffer;
 } decoder_t;
 
+void parse_instruction(decoder_t *decoder, char *output_buf);
+char *format_op(decoder_t *decoder);
+void set_op_code(decoder_t *decoder);
+void set_modrm(decoder_t *decoder);
 
+int slice_current_bits(decoder_t *decoder, int start, int end);
+int slice_peek_bits(decoder_t *decoder, int start, int end);
 int get_bits(int num, int start, int end);
-void get_mod(char *mod, char *encoding);
-void get_r_m(char *r_m, char *encoding);
 void get_reg(char *reg, char *encoding);
 byte_t *read_binary_file(const char *file_path, size_t *bin_size);
 void byte_to_binary(uint8_t byte, char* binary);

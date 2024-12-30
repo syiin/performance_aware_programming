@@ -19,38 +19,22 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	size_t pos = 0;
+	decoder_t *decoder = malloc(sizeof(decoder_t));
+	decoder->pos = 0;
+	decoder->bin_buffer = bin_buffer;
+	/*size_t pos = 0;*/
 	char output_buf[128];
-	while (pos < bin_size){
+
+
+	while (decoder->pos < bin_size){
 		strcpy(output_buf, "");
 
 		//HANDLE OP BYTE
-		int op_code = get_bits(bin_buffer[pos], 2, 7);
-		int d_bit = get_bits(bin_buffer[pos], 1, 1);
-		int w_bit = get_bits(bin_buffer[pos], 0, 0);
-		char *op_string = op_code_to_string(op_code);
-		strcat(output_buf, op_string);
+		set_op_code(decoder);
+		set_modrm(decoder);
 
-		instruction_t instr = op_code_to_instr(op_code);
-		switch(instr){
-			case MOV:{
-				int mod = get_bits(bin_buffer[pos+1], 6, 7);
-				//REGISTER TO REGISTER MOVEMENT
-				if (mod == 3){
-					int reg = get_bits(bin_buffer[pos+1], 0, 2);
-					int reg_m = get_bits(bin_buffer[pos+1], 3, 5);
-
-					strcat(output_buf, " ");
-					strcat(output_buf, reg_to_string(reg, w_bit));
-
-					strcat(output_buf, ", ");
-					strcat(output_buf, reg_to_string(reg_m, w_bit));
-					pos++;
-				}
-			}
-		}
+		parse_instruction(decoder, output_buf);
 		printf("%s\n", output_buf);
-		pos++;
 	}
 }
 

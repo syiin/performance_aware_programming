@@ -1,20 +1,62 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include "helpers.h"
+
+void parse_instruction(decoder_t *decoder, char *output_buf){
+	strcat(output_buf, format_op(decoder));
+	char byte_str[9];
+	byte_to_binary(decoder->bin_buffer[decoder->pos], byte_str);
+	/*printf("BYTE: %s\n", byte_str);*/
+	/*printf("OPCODE: %d\n", decoder->opcode);*/
+	switch(decoder->opcode){
+		case 34:{
+			int reg = slice_peek_bits(decoder, 0, 2);
+			int reg_m = slice_peek_bits(decoder, 3, 5);
+
+			strcat(output_buf, " ");
+			strcat(output_buf, reg_to_string(reg, decoder->w_bit));
+			strcat(output_buf, ", ");
+			strcat(output_buf, reg_to_string(reg_m, decoder->w_bit));
+
+			decoder->pos++;
+		}
+	}
+	decoder->pos++;
+}
+
+char *format_op(decoder_t *decoder){
+	return op_code_to_string(decoder->opcode);
+}
+
+void set_op_code(decoder_t *decoder){
+	uint8_t byte = decoder->bin_buffer[decoder->pos];
+	/*decoder->opcode = byte & 0xFC;*/
+	decoder->opcode = byte >> 2;
+	decoder->d_bit = byte & 0x1;
+	decoder->w_bit = byte & 0x1;
+}
+
+void set_modrm(decoder_t *decoder){
+	uint8_t byte = decoder->bin_buffer[decoder->pos+1];
+	decoder->mod = byte >> 6;
+	decoder->regm = (byte >> 3) & 0x7;
+	decoder->reg = byte & 0x7;
+}
+
+int slice_current_bits(decoder_t *decoder, int start, int end){
+	return get_bits(decoder->bin_buffer[decoder->pos], start, end);
+}
+
+int slice_peek_bits(decoder_t *decoder, int start, int end){
+	return get_bits(decoder->bin_buffer[decoder->pos+1], start, end);
+}
 
 int get_bits(int num, int start, int end) {
    int width_mask = (1 << (end - start + 1)) - 1;
    int positioned_mask = width_mask << start;
    int masked = num & positioned_mask;
    return masked >> start;
-}
-
-void get_mod(char *mod, char *encoding){
-	snprintf(mod, 3, "%d%d", encoding[0], encoding[1]);
-}
-
-void get_r_m(char *r_m, char *encoding) {
-	snprintf(r_m, 3, "%d%d%d", encoding[2], encoding[3], encoding[4]);
 }
 
 char *r_m_to_register(char *op_code){
