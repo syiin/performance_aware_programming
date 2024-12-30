@@ -86,17 +86,35 @@ reg_t reg_encoding_to_register(int reg_encoding){
 }
 
 
-char *reg_to_string(int reg){
-	switch (reg){
-		case (1):
+char *reg_to_string(int reg) {
+	switch (reg) {
+		case 0:
+			return "ax";
+		case 1:
 			return "cx";
-		case (3):
+		case 2:
+			return "dx";
+		case 3:
 			return "bx";
+		case 4:
+			return "sp";
+		case 5:
+			return "bp";
+		case 6:
+			return "si";
+		case 7:
+			return "di";
 		default:
 			return "ILLEGAL_REG";
-	}
+		}
 }
 
 void print_encoding_to_int(char *encoding){
 	printf("%d\n", (int)strtol(encoding, NULL, 2));
+}
+
+void print_position(byte_t *buffer, int pos){
+	char bin_string[9];
+	byte_to_binary(buffer[pos], bin_string);
+	printf("%s\n", bin_string);
 }
