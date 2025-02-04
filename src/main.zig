@@ -1,4 +1,5 @@
 const std = @import("std");
+const bin_utils = @import("bin_utils.zig");
 
 pub fn main() !u8 {
     // Get an allocator
@@ -15,22 +16,11 @@ pub fn main() !u8 {
         return 1;
     }
 
-    const binary = try readBinaryFile(args[1]);
+    const binary = try bin_utils.readBinaryFile(args[1]);
     defer std.heap.page_allocator.free(binary);
 
     for (binary) |byte| {
         std.debug.print("{b}\n", .{byte});
     }
     return 0;
-}
-
-pub fn readBinaryFile(path: []const u8) ![]u8 {
-    var file = try std.fs.cwd().openFile(path, .{});
-    defer file.close();
-
-    const size = try file.getEndPos();
-    const buffer = try std.heap.page_allocator.alloc(u8, size);
-    _ = try file.readAll(buffer);
-
-    return buffer;
 }
