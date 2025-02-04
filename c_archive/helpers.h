@@ -13,13 +13,12 @@ typedef enum {
 typedef enum {
 	CX,
 	BX,
-	ILLEGAL_REG
+	ILLEGAL_REG,
 } reg_t;
 
 typedef struct CurrentBits{
 	uint8_t opcode;
 	uint8_t modrm;
-	
 } current_bits_t;
 
 typedef struct Decoder {

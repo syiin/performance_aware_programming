@@ -25,7 +25,6 @@ int main(int argc, char *argv[]) {
 	/*size_t pos = 0;*/
 	char output_buf[128];
 
-
 	while (decoder->pos < bin_size){
 		strcpy(output_buf, "");
 
