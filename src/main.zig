@@ -1,5 +1,6 @@
 const std = @import("std");
 const bin_utils = @import("bin_utils.zig");
+const decoder = @import("decoder.zig");
 
 pub fn main() !u8 {
     // Get an allocator
@@ -16,11 +17,11 @@ pub fn main() !u8 {
         return 1;
     }
 
-    const binary = try bin_utils.readBinaryFile(args[1]);
-    defer std.heap.page_allocator.free(binary);
+    // Read file and process it
+    const binary = try bin_utils.readBinaryFile(allocator, args[1]);
+    defer allocator.free(binary);
 
-    for (binary) |byte| {
-        std.debug.print("{b}\n", .{byte});
-    }
+    var _decoder = decoder.Decoder.init(binary);
+    _decoder.process_buffer();
     return 0;
 }
